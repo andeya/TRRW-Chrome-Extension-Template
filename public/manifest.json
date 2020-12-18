@@ -1,0 +1,45 @@
+{
+  "name": "ce-ts-demo",
+  "version": "1.0",
+  "description": "TypeScript Chrome Extension Demo",
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
+  },
+  "manifest_version": 2,
+  "page_action": {
+    "default_icon": "images/icon.png",
+    "default_title": "ce-ts-demo",
+    "default_popup": "index.html"
+  },
+  "background": {
+    "scripts": [
+      "static/js/background.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "css": [
+        "static/css/content.css"
+      ],
+      "js": [
+        "static/js/content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "declarativeContent",
+    "storage",
+    "notifications"
+  ],
+  "web_accessible_resources": [
+    "insert.js"
+  ]
+}
