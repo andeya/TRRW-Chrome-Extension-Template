@@ -1,5 +1,6 @@
-// import { apiRequest } from '@/api';
 /// <reference types="chrome" />
+
+import { apiRequest, ApiConfig, BackgroundResult, BackgroundMsg } from '../api';
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
@@ -13,28 +14,34 @@ chrome.runtime.onInstalled.addListener(function () {
   });
 });
 
-// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//   // 接受来自content-script的消息，requset里不允许传递function类型的参数
-//   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-//     const { contentRequest } = request;
-//     // 接收来自content的api请求
-//     if (contentRequest === 'apiRequest') {
-//       let { config } = request;
-//       // API请求成功的回调
-//       config.success = data => {
-//         data.result = 'succ';
-//         sendResponse(data);
-//       };
-//       // API请求失败的回调
-//       config.fail = msg => {
-//         sendResponse({
-//           result: 'fail',
-//           msg,
-//         });
-//       };
-//       // 发起请求
-//       apiRequest(config);
-//     }
-//   });
-//   return true;
-// });
+chrome.runtime.onMessage.addListener(function (
+  msg: BackgroundMsg,
+  sender,
+  sendResponse: (response: BackgroundResult) => void,
+) {
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    const { msgType, msgData } = msg;
+    switch (msgType) {
+      case 'apiRequest':
+        const apiConfig = msgData as ApiConfig;
+        const { then: thenCallback, catch: catchCallback, finally: finallyCallback } = apiConfig;
+        apiConfig.then = resp => {
+          apiConfig.then = thenCallback;
+          sendResponse({ handle: 'then', data: resp });
+        };
+        apiConfig.catch = resp => {
+          apiConfig.catch = catchCallback;
+          sendResponse({ handle: 'catch', data: resp });
+        };
+        apiConfig.finally = () => {
+          apiConfig.finally = finallyCallback;
+          sendResponse({ handle: 'finally', data: void 0 });
+        };
+        apiRequest(apiConfig);
+        break;
+      default:
+        console.warn('not support handle custom message type ' + msgType, msg);
+    }
+  });
+  return true;
+});
