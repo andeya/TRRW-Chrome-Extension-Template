@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import ReactDOM from 'react-dom';
 import './content.less';
 import 'antd/dist/antd.css';
@@ -7,7 +7,7 @@ import { fetch } from '../network';
 
 const formatTimestamp = (ms: number): string => new Date(ms + 3600 * 8).toJSON()?.substr(0, 19).replace('T', ' ');
 
-function Content() {
+const Content: FC<{}> = () => {
   return (
     <Space direction="vertical">
       <Button
@@ -28,7 +28,7 @@ function Content() {
       </Button>
     </Space>
   );
-}
+};
 
 const app = document.createElement('div');
 app.id = 'RTCE-container';
