@@ -6,6 +6,16 @@ export interface ApiConfig<ResponseData> extends AxiosRequestConfig {
   finallyCallback?: () => void;
 }
 
+export function fetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
+  if (process.env.REACT_APP_DEBUG === 'true') {
+    // In debug mode, direct request.
+    windowFetch(apiConfig);
+  } else {
+    // In normal mode, delegate background script to initiate the request.
+    backgroundFetch(apiConfig);
+  }
+}
+
 export function windowFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   axios(apiConfig)
     .then((resp: AxiosResponse<ResponseData>) => {
