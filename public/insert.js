@@ -1,1 +1,1 @@
-console.log('insert.js loaded');
+console.log('React-TS-Chrome-Ext insert.js loaded');

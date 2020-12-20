@@ -9,7 +9,7 @@ const formatTimestamp = (ms: number): string => new Date(ms + 3600 * 8).toJSON()
 
 function Content() {
   return (
-    <Space className="CRX-content" direction="vertical">
+    <Space direction="vertical">
       <Button
         danger
         type="primary"
@@ -31,7 +31,7 @@ function Content() {
 }
 
 const app = document.createElement('div');
-app.id = 'CRX-container';
+app.id = 'RTCE-container';
 document.body.appendChild(app);
 
 ReactDOM.render(<Content />, app);
