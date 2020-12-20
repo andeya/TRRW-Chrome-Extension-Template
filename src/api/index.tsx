@@ -1,61 +1,61 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-export interface ApiConfig extends AxiosRequestConfig {
-  then: (resp: AxiosResponse<any>) => void;
-  catch?: (reason: any) => void;
-  finally?: () => void;
+export interface ApiConfig<ResponseData> extends AxiosRequestConfig {
+  thenCallback?: (resp: AxiosResponse<ResponseData>) => void;
+  catchCallback?: (reason: any) => void;
+  finallyCallback?: () => void;
 }
 
 // 发起请求
-export function fetch(apiConfig: ApiConfig) {
+export function fetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   if (process.env.REACT_APP_DEBUG === 'true') {
-    apiRequest(apiConfig);
+    windowFetch(apiConfig);
   } else {
-    sendRequestToBackground(apiConfig);
+    backgroundFetch(apiConfig);
   }
 }
 
-export function apiRequest(apiConfig: ApiConfig) {
+export function windowFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   axios(apiConfig)
-    .then((resp: AxiosResponse<any>) => {
-      apiConfig.then(resp);
+    .then((resp: AxiosResponse<ResponseData>) => {
+      apiConfig.thenCallback && apiConfig.thenCallback(resp);
     })
     .catch((reason: any) => {
-      apiConfig.catch && apiConfig.catch(reason);
+      apiConfig.catchCallback && apiConfig.catchCallback(reason);
     })
     .finally(() => {
-      apiConfig.finally && apiConfig.finally();
+      apiConfig.finallyCallback && apiConfig.finallyCallback();
     });
 }
 
-export interface BackgroundMsg {
-  msgType: 'apiRequest' | string;
-  msgData: ApiConfig | any;
+export interface BackgroundMsg<ResponseData> {
+  msgType: 'backgroundFetch';
+  msgData: ApiConfig<ResponseData>;
 }
 
 export interface BackgroundResult {
   handle: 'then' | 'catch' | 'finally';
-  data: AxiosResponse<any> | any;
+  data?: AxiosResponse<any>;
 }
 
-function sendRequestToBackground(apiConfig: ApiConfig) {
+function backgroundFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   if (window.chrome && window.chrome.runtime) {
     window.chrome &&
       window.chrome.runtime.sendMessage(
         {
-          msgType: 'apiRequest',
+          msgType: 'backgroundFetch',
           msgData: apiConfig,
-        } as BackgroundMsg,
+        } as BackgroundMsg<ResponseData>,
         (result: BackgroundResult) => {
           switch (result.handle) {
             case 'then':
-              apiConfig.then(result.data);
+              apiConfig.thenCallback && apiConfig.thenCallback(result.data!);
               break;
             case 'catch':
-              apiConfig.catch && apiConfig.catch(result.data);
+              apiConfig.catchCallback && apiConfig.catchCallback(result.data);
               break;
             case 'finally':
-              apiConfig.finally && apiConfig.finally();
+              apiConfig.finallyCallback && apiConfig.finallyCallback();
           }
         },
       );
