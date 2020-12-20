@@ -6,14 +6,6 @@ export interface ApiConfig<ResponseData> extends AxiosRequestConfig {
   finallyCallback?: () => void;
 }
 
-export function fetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
-  if (process.env.REACT_APP_DEBUG === 'true') {
-    windowFetch(apiConfig);
-  } else {
-    backgroundFetch(apiConfig);
-  }
-}
-
 export function windowFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   axios(apiConfig)
     .then((resp: AxiosResponse<ResponseData>) => {
@@ -47,7 +39,7 @@ export interface BackgroundResult {
   data?: AxiosResponse<any>;
 }
 
-function backgroundFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
+export function backgroundFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   if (window.chrome && window.chrome.runtime) {
     const msg: BackgroundMsg<ResponseData> = {
       msgId: genRequestId(),

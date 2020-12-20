@@ -1,6 +1,6 @@
 /// <reference types="chrome" />
 
-import { windowFetch, ApiConfig, BackgroundResult, BackgroundMsg } from '../api';
+import { windowFetch, ApiConfig, BackgroundResult, BackgroundMsg } from '../network';
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
