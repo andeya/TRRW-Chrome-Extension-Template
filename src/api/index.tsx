@@ -6,7 +6,6 @@ export interface ApiConfig<ResponseData> extends AxiosRequestConfig {
   finallyCallback?: () => void;
 }
 
-// 发起请求
 export function fetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   if (process.env.REACT_APP_DEBUG === 'true') {
     windowFetch(apiConfig);
@@ -28,9 +27,19 @@ export function windowFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
     });
 }
 
+let requestId = 0;
+const genRequestId = (): string => {
+  return (requestId++).toString();
+};
+
 export interface BackgroundMsg<ResponseData> {
+  msgId: string;
   msgType: 'backgroundFetch';
-  msgData: ApiConfig<ResponseData>;
+  msgData: {
+    hasThen: boolean;
+    hasCatch: boolean;
+    hasFinally: boolean;
+  } & ApiConfig<ResponseData>;
 }
 
 export interface BackgroundResult {
@@ -40,25 +49,32 @@ export interface BackgroundResult {
 
 function backgroundFetch<ResponseData>(apiConfig: ApiConfig<ResponseData>) {
   if (window.chrome && window.chrome.runtime) {
-    window.chrome &&
-      window.chrome.runtime.sendMessage(
-        {
-          msgType: 'backgroundFetch',
-          msgData: apiConfig,
-        } as BackgroundMsg<ResponseData>,
-        (result: BackgroundResult) => {
-          switch (result.handle) {
-            case 'then':
-              apiConfig.thenCallback && apiConfig.thenCallback(result.data!);
-              break;
-            case 'catch':
-              apiConfig.catchCallback && apiConfig.catchCallback(result.data);
-              break;
-            case 'finally':
-              apiConfig.finallyCallback && apiConfig.finallyCallback();
-          }
-        },
-      );
+    const msg: BackgroundMsg<ResponseData> = {
+      msgId: genRequestId(),
+      msgType: 'backgroundFetch',
+      msgData: {
+        hasThen: !!apiConfig.thenCallback,
+        hasCatch: !!apiConfig.catchCallback,
+        hasFinally: !!apiConfig.finallyCallback,
+        ...apiConfig,
+      },
+    };
+    console.debug('sendMessage[%s]-send: message=%o', msg.msgId, msg);
+    window.chrome.runtime.sendMessage(msg, (result: BackgroundResult) => {
+      switch (result.handle) {
+        case 'then':
+          console.debug('sendMessage[%s]-then: message=%o, response=%o', msg.msgId, msg, result.data);
+          apiConfig.thenCallback && apiConfig.thenCallback(result.data!);
+          break;
+        case 'catch':
+          console.debug('sendMessage[%s]-catch: message=%o, error=%o', msg.msgId, msg, result.data);
+          apiConfig.catchCallback && apiConfig.catchCallback(result.data);
+          break;
+        case 'finally':
+          console.debug('sendMessage[%s]-finally: message=%o', msg.msgId, msg);
+          apiConfig.finallyCallback && apiConfig.finallyCallback();
+      }
+    });
   } else {
     console.error('not found Chrome API: window.chrome.runtime.sendMessage');
   }

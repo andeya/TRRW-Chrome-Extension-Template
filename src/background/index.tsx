@@ -6,7 +6,6 @@ chrome.runtime.onInstalled.addListener(function () {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
     chrome.declarativeContent.onPageChanged.addRules([
       {
-        // 运行插件运行的页面URL规则
         conditions: [new chrome.declarativeContent.PageStateMatcher({ pageUrl: {} })],
         actions: [new window.chrome.declarativeContent.ShowPageAction()],
       },
@@ -20,29 +19,35 @@ chrome.runtime.onMessage.addListener(function (
   sendResponse: (response: BackgroundResult) => void,
 ) {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    const { msgType, msgData } = msg;
+    const { msgId, msgType, msgData } = msg;
     switch (msgType) {
       case 'backgroundFetch':
         const apiConfig = msgData as ApiConfig<any>;
-        apiConfig.thenCallback = resp => {
-          const result: BackgroundResult = { handle: 'then', data: resp };
-          console.debug('onMessage: msg=%o, result=%o', msg, result);
-          sendResponse(result);
-        };
-        apiConfig.catchCallback = error => {
-          const result: BackgroundResult = { handle: 'catch', data: error };
-          console.debug('onMessage: msg=%o, result=%o', msg, result);
-          sendResponse(result);
-        };
-        apiConfig.finallyCallback = () => {
-          const result: BackgroundResult = { handle: 'finally' };
-          console.debug('onMessage: msg=%o, result=%o', msg, result);
-          sendResponse(result);
-        };
+        msgData.hasThen &&
+          (apiConfig.thenCallback = resp => {
+            const result: BackgroundResult = { handle: 'then', data: resp };
+            console.debug('onMessage[%s]-%s: message=%o, response=%o', msgId, result.handle, msg, result.data);
+            sendResponse(result);
+          });
+        msgData.hasCatch
+          ? (apiConfig.catchCallback = error => {
+              const result: BackgroundResult = { handle: 'catch', data: error };
+              console.debug('onMessage[%s]-%s: message=%o, error=%o', msgId, result.handle, msg, result.data);
+              sendResponse(result);
+            })
+          : (apiConfig.catchCallback = error => {
+              console.error('onMessage[%s] fail: message=%o, error=%o', msgId, msg, error);
+            });
+        msgData.hasFinally &&
+          (apiConfig.finallyCallback = () => {
+            const result: BackgroundResult = { handle: 'finally' };
+            console.debug('onMessage[%s]-%s: message=%o', msgId, result.handle, msg);
+            sendResponse(result);
+          });
         windowFetch(apiConfig);
         break;
       default:
-        console.warn('not support handle custom message type ' + msgType, msg);
+        console.warn('onMessage[%s] fail: not support handle custom message: %o', msgId, msg);
     }
   });
   return true;
