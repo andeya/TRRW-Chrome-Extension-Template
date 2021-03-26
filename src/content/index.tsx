@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
 import ReactDOM from 'react-dom';
+import './rtce-antd.less';
 import './content.less';
-import 'antd/dist/antd.css';
-import { Button, Space } from 'antd';
 import { fetch } from '../network';
+import Space from 'antd/es/space';
+import Button from 'antd/es/button';
 
 const formatTimestamp = (ms: number): string => new Date(ms + 3600 * 8).toJSON()?.substr(0, 19).replace('T', ' ');
 
