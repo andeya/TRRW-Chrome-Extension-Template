@@ -15,3 +15,7 @@ yarn build
 ```
 
 The output directory is `./build/`.
+
+## Popup Preview
+
+[](doc/screenshot-popup.png)
