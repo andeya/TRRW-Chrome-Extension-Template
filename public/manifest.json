@@ -1,7 +1,7 @@
 {
   "name": "React-TS-Chrome-Ext",
   "version": "1.0",
-  "description": "Use React + TypeScript + Antd to develop Chrome Extension",
+  "description": "Use React + TypeScript + Antd + Wasm to develop Chrome Extension",
   "icons": {
     "16": "images/icon.png",
     "48": "images/icon.png",
@@ -41,5 +41,6 @@
   ],
   "web_accessible_resources": [
     "insert.js"
-  ]
+  ],
+  "content_security_policy": "script-src 'self' 'wasm-eval'; object-src 'self'"
 }

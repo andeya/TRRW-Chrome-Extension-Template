@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Popup from './popup';
 import { ConfigProvider } from 'antd';
+import 'antd/dist/antd.css';
+import App from './App';
 import zhCN from 'antd/es/locale/zh_CN';
 import reportWebVitals from './reportWebVitals';
 
@@ -11,7 +12,7 @@ const antdConfig = {
 
 ReactDOM.render(
   <ConfigProvider {...antdConfig}>
-    <Popup />
+    <App />
   </ConfigProvider>,
   document.getElementById('root'),
 );

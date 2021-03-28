@@ -1,5 +1,7 @@
+import Popup from './popup';
+
 function App() {
-  return <></>;
+  return <Popup />;
 }
 
 export default App;

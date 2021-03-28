@@ -1,6 +1,6 @@
 # React-TS-Chrome-Ext
 
-Use React + TypeScript + Antd to develop Chrome Extension.
+Use React + TypeScript + Antd + Wasm to develop Chrome Extension.
 
 - install
 
@@ -13,3 +13,5 @@ yarn install
 ```sh
 yarn build
 ```
+
+The output directory is `./build/`.

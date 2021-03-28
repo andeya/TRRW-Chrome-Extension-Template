@@ -28,6 +28,7 @@ const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const postcssNormalize = require('postcss-normalize');
+const override = require('./config-overrides');
 
 const appPackageJson = require(paths.appPackageJson);
 
@@ -148,7 +149,7 @@ module.exports = function (webpackEnv) {
     return loaders;
   };
 
-  return {
+  const config = {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
     // Stop compilation early in production
     bail: isEnvProduction,
@@ -731,4 +732,5 @@ module.exports = function (webpackEnv) {
     // our own hints via the FileSizeReporter
     performance: false,
   };
+  return override(config, webpackEnv);
 };
