@@ -18,4 +18,4 @@ The output directory is `./build/`.
 
 ## Popup Preview
 
-[](doc/screenshot-popup.png)
+![screenshot-popup](doc/screenshot-popup.png)
