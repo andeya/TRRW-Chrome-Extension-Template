@@ -1,2 +1,2 @@
-*.* linguist-language=typescript
+*.!rs linguist-language=typescript
 *.rs linguist-language=rust
