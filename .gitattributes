@@ -1,2 +1,2 @@
-*.!rs linguist-language=typescript
-*.rs linguist-language=rust
+*.less linguist-language=other
+*.css linguist-language=other
