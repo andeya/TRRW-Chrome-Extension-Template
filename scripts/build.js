@@ -1,5 +1,17 @@
 'use strict';
 
+const shell = require('shelljs');
+function exec(...args) {
+  console.debug(args.join());
+  const result = shell.exec(...args);
+  if (result.code !== 0) {
+    throw new Error(result.stderr);
+  }
+  return result;
+}
+exec('sudo wasm-pack build --out-dir ../src/wasm wasm');
+exec('sudo rm -rf ./src/wasm/.gitignore');
+
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';

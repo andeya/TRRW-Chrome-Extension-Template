@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import ReactDOM from 'react-dom';
-import './rtce-antd.less';
+import '../rtce-antd.less';
 import './content.less';
 import { fetch } from '../network';
 import Space from 'antd/es/space';

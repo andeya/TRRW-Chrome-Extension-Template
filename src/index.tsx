@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ConfigProvider } from 'antd';
-import 'antd/dist/antd.css';
 import App from './App';
 import zhCN from 'antd/es/locale/zh_CN';
+import ConfigProvider from 'antd/es/config-provider';
+import './rtce-antd.less';
 import reportWebVitals from './reportWebVitals';
 
 const antdConfig = {
   locale: zhCN,
 };
 
+document.body.id = 'RTCE-container';
 ReactDOM.render(
   <ConfigProvider {...antdConfig}>
     <App />

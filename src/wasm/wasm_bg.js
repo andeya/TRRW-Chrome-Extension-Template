@@ -1,4 +1,4 @@
-import * as wasm from './rust_wasm_bg.wasm';
+import * as wasm from './wasm_bg.wasm';
 
 const lTextDecoder = typeof TextDecoder === 'undefined' ? (0, module.require)('util').TextDecoder : TextDecoder;
 
@@ -19,21 +19,11 @@ function getStringFromWasm0(ptr, len) {
 }
 /**
 */
-export function hello() {
-    wasm.hello();
+export function greet() {
+    wasm.greet();
 }
 
-/**
-* @param {number} a
-* @param {number} b
-* @returns {number}
-*/
-export function add(a, b) {
-    var ret = wasm.add(a, b);
-    return ret;
-}
-
-export const __wbg_alert_687b32b1cf6b878a = function(arg0, arg1) {
+export const __wbg_alert_f5393de24ed74e50 = function(arg0, arg1) {
     alert(getStringFromWasm0(arg0, arg1));
 };
 

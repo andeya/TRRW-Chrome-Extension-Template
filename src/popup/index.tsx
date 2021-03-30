@@ -1,8 +1,11 @@
 import React, { FC, Suspense, useState } from 'react';
-import { HashRouter, Route, Switch, Link } from 'react-router-dom';
-import { Layout, Menu, Button, Modal } from 'antd';
+import { HashRouter, Link, Route, Switch } from 'react-router-dom';
 import { HomeOutlined } from '@ant-design/icons';
 import Hello from './pages/hello';
+import Layout from 'antd/es/layout';
+import Menu from 'antd/es/menu';
+import Button from 'antd/es/button';
+import Modal from 'antd/es/modal';
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -75,8 +78,8 @@ const Home: FC<{}> = () => {
           <div style={{ minHeight: 200 }}>
             <Button
               onClick={async (): Promise<void> => {
-                const { hello } = await import('../rust-wasm');
-                hello();
+                const { greet } = await import('../wasm');
+                greet();
               }}
             >
               alert hello
