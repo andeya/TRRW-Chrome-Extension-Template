@@ -1,6 +1,6 @@
 # React-TS-Chrome-Ext
 
-Use React + TypeScript + Antd + Wasm to develop Chrome Extension.
+Use React + TypeScript + Antd + Rust-Wasm to develop Chrome Extension.
 
 ## Install Tools
 
