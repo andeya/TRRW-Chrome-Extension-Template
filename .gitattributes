@@ -1,2 +1,3 @@
 *.less linguist-language=other
 *.css linguist-language=other
+*.scss linguist-language=other
